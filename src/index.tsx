@@ -41,7 +41,7 @@ export type IPrequalifyProps = {
 }
 
 export type ICheckoutProps = IPrequalifyProps & {
-  cartDetails?: ICartDetails,
+  cartDetails: ICartDetails,
   prequalifyConfirmationToken?: string,
 }
 

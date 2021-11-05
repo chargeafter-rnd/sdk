@@ -1,5 +1,5 @@
 import React from 'react';
-import { EnvironmentType, prequalify } from "../dist";
+import { EnvironmentType, prequalify } from "../src";
 
 interface ButtonProps {
 
@@ -20,10 +20,6 @@ interface ButtonProps {
  * Primary UI component for user interaction
  */
 export const Button = ({
-    // primary = false,
-    // size = 'medium',
-    // backgroundColor,
-    // label,
     firstName,
     apiKey,
     env = "production",
