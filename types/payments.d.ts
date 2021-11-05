@@ -43,6 +43,7 @@ export interface IDiscount {
 }
 
 export interface ICartDetails {
+    merchantOrderId?: string;
     items: ICartItem[];
     discounts?: IDiscount[];
     totalAmount: number;
