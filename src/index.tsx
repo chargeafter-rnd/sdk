@@ -1,4 +1,14 @@
-import { ApplyCallBackData, AppOptionsProps, Channel, CheckoutCallBackData, CheckoutError, Config, IPreferences, OnDataUpdateCallBackData, UpdatedData } from '../types/ca';
+import {
+  ApplyCallBackData,
+  AppOptionsProps,
+  Channel,
+  CheckoutCallBackData,
+  CheckoutError,
+  Config,
+  IPreferences,
+  OnDataUpdateCallBackData,
+  UpdatedData,
+} from '../types/ca';
 import { ICartDetails, IConsumerDetails } from '../types/payments';
 
 const checkoutId = 'chargeafter-checkout-finance-sdk';
@@ -9,53 +19,72 @@ interface CreatePaymentsData {
   present: () => void;
 }
 
-export type EnvironmentType = "production" | "qa" | "sandbox" | "demo" | "develop";
+export type EnvironmentType =
+  | 'production'
+  | 'qa'
+  | 'sandbox'
+  | 'demo'
+  | 'develop';
 
 export type IEnvironment = {
   name?: EnvironmentType;
   apiKey: string;
-}
+};
 
 const URLs: Record<EnvironmentType, string> = {
-  "production": "https://cdn.chargeafter.com/web/v2/chargeafter.min.js",
-  "qa": "https://cdn-qa.ca-dev.co/web/v2/chargeafter.min.js",
-  "sandbox": "https://cdn-sandbox.ca-dev.co/web/v2/chargeafter.min.js",
-  "demo": "https://cdn-demo.ca-dev.co/web/v2/chargeafter.min.js",
-  "develop": "https://cdn-develop.ca-dev.co/web/v2/chargeafter.min.js",
+  production: 'https://cdn.chargeafter.com/web/v2/chargeafter.min.js',
+  qa: 'https://cdn-qa.ca-dev.co/web/v2/chargeafter.min.js',
+  sandbox: 'https://cdn-sandbox.ca-dev.co/web/v2/chargeafter.min.js',
+  demo: 'https://cdn-demo.ca-dev.co/web/v2/chargeafter.min.js',
+  develop: 'https://cdn-develop.ca-dev.co/web/v2/chargeafter.min.js',
 };
 
 export type IConfig = {
-  env: IEnvironment,
-  channel?: Channel,
-  storeId?: string,
-  preferences?: IPreferences,
-}
+  env: IEnvironment;
+  channel?: Channel;
+  storeId?: string;
+  preferences?: IPreferences;
+};
 
-export type OnDataUpdate = (data: UpdatedData) => OnDataUpdateCallBackData | undefined;
+export type OnDataUpdate = (
+  data: UpdatedData
+) => OnDataUpdateCallBackData | undefined;
 
 export type IPrequalifyProps = {
-  config: IConfig,
-  currency?: string,
-  consumerDetails?: IConsumerDetails,
-  onDataUpdate?: OnDataUpdate,
-}
+  config: IConfig;
+  currency?: string;
+  consumerDetails?: IConsumerDetails;
+  onDataUpdate?: OnDataUpdate;
+};
 
 export type ICheckoutProps = IPrequalifyProps & {
-  cartDetails: ICartDetails,
-  prequalifyConfirmationToken?: string,
-}
+  cartDetails: ICartDetails;
+  prequalifyConfirmationToken?: string;
+};
 
 export type CheckoutResult = CheckoutCallBackData & { token: string };
 export type PrequalifyResult = ApplyCallBackData;
 
 export const prequalify = (props: IPrequalifyProps) =>
-  launchPaymentsUI(props.config, props.currency, undefined, props.consumerDetails, props.onDataUpdate) as Promise<PrequalifyResult>;
+  launchPaymentsUI(
+    props.config,
+    props.currency,
+    undefined,
+    props.consumerDetails,
+    props.onDataUpdate
+  ) as Promise<PrequalifyResult>;
 
 export const checkout = (props: ICheckoutProps) =>
-  launchPaymentsUI(props.config, props.currency, props.cartDetails, props.consumerDetails, props.onDataUpdate, props.prequalifyConfirmationToken) as Promise<CheckoutResult>;
+  launchPaymentsUI(
+    props.config,
+    props.currency,
+    props.cartDetails,
+    props.consumerDetails,
+    props.onDataUpdate,
+    props.prequalifyConfirmationToken
+  ) as Promise<CheckoutResult>;
 
 const createPaymentsUI = ({ caConfig, url, present }: CreatePaymentsData) => {
-
   const { document } = window;
   if (document.getElementById(checkoutId)) {
     present();
@@ -71,52 +100,51 @@ const createPaymentsUI = ({ caConfig, url, present }: CreatePaymentsData) => {
   document.body.appendChild(script);
 };
 
-const launchPaymentsUI = (config: IConfig, currency?: string, cartDetails?: ICartDetails, consumerDetails?: IConsumerDetails, onDataUpdate?: OnDataUpdate, prequalifyConfirmationToken?: string) => {
-
+const launchPaymentsUI = (
+  config: IConfig,
+  currency?: string,
+  cartDetails?: ICartDetails,
+  consumerDetails?: IConsumerDetails,
+  onDataUpdate?: OnDataUpdate,
+  prequalifyConfirmationToken?: string
+) => {
   const checkout = cartDetails && consumerDetails;
 
   const envUrl = URLs[config.env.name ?? 'production'];
 
   return new Promise((resolve, reject) => {
-
-
     const opt: AppOptionsProps = {
       consumerDetails,
       cartDetails,
       prequalifyConfirmationToken,
-      onDataUpdate: onDataUpdate ? (updatedData, callback) => {
-        callback(onDataUpdate(updatedData));
-      } : undefined,
-      callback: checkout ? (
-        token?: string,
-        data?: CheckoutCallBackData,
-        error?: CheckoutError
-      ) => {
-        if (error) {
-          console.error(`payments error: ${JSON.stringify(error)}`)
-          reject(error);
-        }
-        else
-          resolve({ token, ...data });
-      } : (
-        result?: ApplyCallBackData,
-        error?: CheckoutError
-      ) => {
-        if (error) {
-          console.error(`payments error: ${JSON.stringify(error)}`)
-          reject(error);
-        }
-        else
-          resolve(result);
-      },
+      onDataUpdate: onDataUpdate
+        ? (updatedData, callback) => {
+            callback(onDataUpdate(updatedData));
+          }
+        : undefined,
+      callback: checkout
+        ? (
+            token?: string,
+            data?: CheckoutCallBackData,
+            error?: CheckoutError
+          ) => {
+            if (error) {
+              console.error(`payments error: ${JSON.stringify(error)}`);
+              reject(error);
+            } else resolve({ token, ...data });
+          }
+        : (result?: ApplyCallBackData, error?: CheckoutError) => {
+            if (error) {
+              console.error(`payments error: ${JSON.stringify(error)}`);
+              reject(error);
+            } else resolve(result);
+          },
       channel: config.channel,
       preferences: config.preferences,
     };
 
     const present = () => {
-      window.ChargeAfter[
-        checkout ? 'checkout' : 'apply'
-      ]?.present(opt);
+      window.ChargeAfter[checkout ? 'checkout' : 'apply']?.present(opt);
     };
 
     const caConfig = {
