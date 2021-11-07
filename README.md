@@ -1,4 +1,4 @@
-# ChargeAfter payments SDK
+# ChargeAfter payment SDK
 ----------
 
 ### Installing
