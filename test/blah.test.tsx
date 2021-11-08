@@ -7,7 +7,7 @@ describe('Thing', () => {
     const div = document.createElement('div');
     ReactDOM.render(
       <Launcher apiKey="b5bbae03345db7e01f5462ea5ab978e33c4ae92c" />,
-      div
+      div,
     );
     ReactDOM.unmountComponentAtNode(div);
   });

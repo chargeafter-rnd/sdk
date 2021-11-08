@@ -86,7 +86,7 @@ type OnDataUpdateCallBack = (data?: OnDataUpdateCallBackData) => void;
 
 type OnDataUpdate = (
   updatedData: UpdatedData,
-  callback: OnDataUpdateCallBack
+  callback: OnDataUpdateCallBack,
 ) => void;
 
 export interface CheckoutCallBackArguments {

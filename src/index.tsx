@@ -47,7 +47,7 @@ export type IConfig = {
 };
 
 export type OnDataUpdate = (
-  data: UpdatedData
+  data: UpdatedData,
 ) => OnDataUpdateCallBackData | undefined;
 
 export type IPrequalifyProps = {
@@ -71,7 +71,7 @@ export const prequalify = (props: IPrequalifyProps) =>
     props.currency,
     undefined,
     props.consumerDetails,
-    props.onDataUpdate
+    props.onDataUpdate,
   ) as Promise<PrequalifyResult>;
 
 export const checkout = (props: ICheckoutProps) =>
@@ -81,7 +81,7 @@ export const checkout = (props: ICheckoutProps) =>
     props.cartDetails,
     props.consumerDetails,
     props.onDataUpdate,
-    props.prequalifyConfirmationToken
+    props.prequalifyConfirmationToken,
   ) as Promise<CheckoutResult>;
 
 const createPaymentsUI = ({ caConfig, url, present }: CreatePaymentsData) => {
@@ -106,7 +106,7 @@ const launchPaymentsUI = (
   cartDetails?: ICartDetails,
   consumerDetails?: IConsumerDetails,
   onDataUpdate?: OnDataUpdate,
-  prequalifyConfirmationToken?: string
+  prequalifyConfirmationToken?: string,
 ) => {
   const checkout = cartDetails && consumerDetails;
 
@@ -126,7 +126,7 @@ const launchPaymentsUI = (
         ? (
             token?: string,
             data?: CheckoutCallBackData,
-            error?: CheckoutError
+            error?: CheckoutError,
           ) => {
             if (error) {
               console.error(`payments error: ${JSON.stringify(error)}`);
