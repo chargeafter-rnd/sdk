@@ -1,5 +1,5 @@
 {
-  "version": "1.0.5",
+  "version": "1.0.6",
   "license": "MIT",
   "description": "ChargeAfter payment SDK.\nThis is the preferred integration approach for stores that don't work with supported eCommerce platforms.",
   "repository": {
