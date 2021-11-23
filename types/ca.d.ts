@@ -40,6 +40,7 @@ export interface AppOptionsProps extends AdditionalPropsToOptions {
   onDataUpdate?: OnDataUpdate;
   channel?: Channel;
   preferences?: IPreferences;
+  currency?: string;
 }
 
 /**

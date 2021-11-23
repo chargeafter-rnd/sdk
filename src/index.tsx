@@ -141,6 +141,7 @@ const launchPaymentsUI = (
           },
       channel: config.channel,
       preferences: config.preferences,
+      currency,
     };
 
     const present = () => {
