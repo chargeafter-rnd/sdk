@@ -81,6 +81,7 @@ export const checkout = (props: ICheckoutProps) =>
     props.cartDetails,
     props.consumerDetails,
     props.onDataUpdate,
+    true,
     props.prequalifyConfirmationToken,
   ) as Promise<CheckoutResult>;
 
@@ -106,9 +107,9 @@ const launchPaymentsUI = (
   cartDetails?: ICartDetails,
   consumerDetails?: IConsumerDetails,
   onDataUpdate?: OnDataUpdate,
+  checkout?: boolean,
   prequalifyConfirmationToken?: string,
 ) => {
-  const checkout = cartDetails && consumerDetails;
 
   const envUrl = URLs[config.env.name ?? 'production'];
 
@@ -144,7 +145,9 @@ const launchPaymentsUI = (
     };
 
     const present = () => {
-      window.ChargeAfter[checkout ? 'checkout' : 'apply']?.present(opt);
+      const method = window.ChargeAfter[checkout ? 'checkout' : 'apply'];
+      console.log(`Calling SDK: ${method}, prequalify token: ${opt.prequalifyConfirmationToken}`);
+      method?.present(opt);
     };
 
     const caConfig = {
