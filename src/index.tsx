@@ -119,26 +119,26 @@ const launchPaymentsUI = (
       prequalifyConfirmationToken,
       onDataUpdate: onDataUpdate
         ? (updatedData, callback) => {
-          callback(onDataUpdate(updatedData));
-        }
+            callback(onDataUpdate(updatedData));
+          }
         : undefined,
       callback: checkout
         ? (
-          token?: string,
-          data?: CheckoutCallBackData,
-          error?: CheckoutError,
-        ) => {
-          if (error) {
-            console.error(`payments error: ${JSON.stringify(error)}`);
-            reject(error);
-          } else resolve({ token, ...data });
-        }
+            token?: string,
+            data?: CheckoutCallBackData,
+            error?: CheckoutError,
+          ) => {
+            if (error) {
+              console.error(`payments error: ${JSON.stringify(error)}`);
+              reject(error);
+            } else resolve({ token, ...data });
+          }
         : (result?: ApplyCallBackData, error?: CheckoutError) => {
-          if (error) {
-            console.error(`payments error: ${JSON.stringify(error)}`);
-            reject(error);
-          } else resolve(result);
-        },
+            if (error) {
+              console.error(`payments error: ${JSON.stringify(error)}`);
+              reject(error);
+            } else resolve(result);
+          },
       channel: config.channel,
       preferences: config.preferences,
       currency,
