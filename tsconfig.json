@@ -1,4 +1,4 @@
-/* {
+{
   // see https://www.typescriptlang.org/tsconfig to better understand tsconfigs
   "include": ["src", "types"],
   "compilerOptions": {
@@ -33,8 +33,8 @@
     "noEmit": true,
   }
 }
- */
-{
+
+/* {
   "extends": "@tsconfig/create-react-app/tsconfig.json",
   "compilerOptions": {
     "allowJs": false,
@@ -50,5 +50,5 @@
   "include": [
     "src", "types"
   ]
-}
+} */
 

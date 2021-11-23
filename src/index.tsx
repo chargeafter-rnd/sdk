@@ -110,7 +110,6 @@ const launchPaymentsUI = (
   checkout?: boolean,
   prequalifyConfirmationToken?: string,
 ) => {
-
   const envUrl = URLs[config.env.name ?? 'production'];
 
   return new Promise((resolve, reject) => {
@@ -146,7 +145,9 @@ const launchPaymentsUI = (
 
     const present = () => {
       const method = window.ChargeAfter[checkout ? 'checkout' : 'apply'];
-      console.log(`Calling SDK: ${method}, prequalify token: ${opt.prequalifyConfirmationToken}`);
+      console.log(
+        `Calling SDK: ${method}, prequalify token: ${opt.prequalifyConfirmationToken}`,
+      );
       method?.present(opt);
     };
 
