@@ -32,7 +32,6 @@ export const Button = ({
             {...props}
             onClick={async () => {
                 try {
-                    debugger
                     await prequalify({
                         config: {
                             env: {
