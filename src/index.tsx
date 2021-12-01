@@ -55,6 +55,7 @@ export type IPrequalifyProps = {
   currency?: string;
   consumerDetails?: IConsumerDetails;
   onDataUpdate?: OnDataUpdate;
+  onModalOpen?: () => void;
 };
 
 export type ICheckoutProps = IPrequalifyProps & {
@@ -72,6 +73,7 @@ export const prequalify = (props: IPrequalifyProps) =>
     undefined,
     props.consumerDetails,
     props.onDataUpdate,
+    props.onModalOpen,
   ) as Promise<PrequalifyResult>;
 
 export const checkout = (props: ICheckoutProps) =>
@@ -81,6 +83,7 @@ export const checkout = (props: ICheckoutProps) =>
     props.cartDetails,
     props.consumerDetails,
     props.onDataUpdate,
+    props.onModalOpen,
     true,
     props.prequalifyConfirmationToken,
   ) as Promise<CheckoutResult>;
@@ -107,6 +110,7 @@ const launchPaymentsUI = (
   cartDetails?: ICartDetails,
   consumerDetails?: IConsumerDetails,
   onDataUpdate?: OnDataUpdate,
+  onModalOpen?: () => void,
   checkout?: boolean,
   prequalifyConfirmationToken?: string,
 ) => {
@@ -150,6 +154,7 @@ const launchPaymentsUI = (
         `Calling SDK for ${method}, prequalify token: '${opt.prequalifyConfirmationToken}'`,
       );
       window.ChargeAfter[method]?.present(opt);
+      onModalOpen?.();
     };
 
     const caConfig = {

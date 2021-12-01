@@ -32,6 +32,7 @@ export const Button = ({
             {...props}
             onClick={async () => {
                 try {
+                    debugger
                     await prequalify({
                         config: {
                             env: {
@@ -41,6 +42,9 @@ export const Button = ({
                         },
                         consumerDetails: {
                             firstName
+                        },
+                        onModalOpen: () => {
+                            console.log("##############opened###########")
                         }
                     });
                 } catch (e) {
