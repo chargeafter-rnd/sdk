@@ -150,6 +150,7 @@ export interface Config {
   storeId?: string;
   onLoadChargeAfter?: () => void;
   iframeId?: string;
+  onLoaded?: () => void;
 }
 
 export interface ChargeAfter {

@@ -92,6 +92,7 @@ const createPaymentsUI = ({ caConfig, url, present }: CreatePaymentsData) => {
   const { document } = window;
   if (document.getElementById(checkoutId)) {
     present();
+    caConfig.onLoaded?.();
     return;
   }
   window.caConfig = caConfig;
@@ -154,13 +155,13 @@ const launchPaymentsUI = (
         `Calling SDK for ${method}, prequalify token: '${opt.prequalifyConfirmationToken}'`,
       );
       window.ChargeAfter[method]?.present(opt);
-      onModalOpen?.();
     };
 
-    const caConfig = {
+    const caConfig: Config = {
       apiKey: config.env.apiKey,
       storeId: config.storeId,
       onLoadChargeAfter: present,
+      onLoaded: onModalOpen,
     };
 
     createPaymentsUI({
