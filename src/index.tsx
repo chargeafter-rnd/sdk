@@ -138,10 +138,8 @@ const launchPaymentsUI = (
       onDataUpdate: onDataUpdate
         ? (updatedData, callback) => {
             const result = onDataUpdate(updatedData);
-            if (result)
-              result.then(data => callback(data));
-            else
-              callback();
+            if (result) result.then((data) => callback(data));
+            else callback();
           }
         : undefined,
       callback: checkout
