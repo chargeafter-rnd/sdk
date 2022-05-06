@@ -16,6 +16,7 @@ import { prequalify, checkout } from "@chargeafter/payment-sdk";
 await prequalify({
     config: {
         env: {
+            name?: "production" | "sandbox", // defaults to "production"
             apiKey: "<your api key>",
         }
     },
@@ -26,6 +27,7 @@ await prequalify({
 await checkout({
     config: {
         env: {
+            name?: "production" | "sandbox", // defaults to "production"
             apiKey: "<your api key>",
         }
     },

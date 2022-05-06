@@ -42,6 +42,9 @@ export interface IDiscount {
 }
 
 export interface ICartDetails {
+  /**
+   * Merchant order id. Passed to the lender when supported.
+   */
   merchantOrderId?: string;
   items: ICartItem[];
   discounts?: IDiscount[];

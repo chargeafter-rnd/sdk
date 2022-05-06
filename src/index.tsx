@@ -48,18 +48,31 @@ export type IConfig = {
 
 export type OnDataUpdate = (
   data: UpdatedData,
-) => OnDataUpdateCallBackData | undefined;
+) => PromiseLike<OnDataUpdateCallBackData> | undefined | void;
 
 export type IPrequalifyProps = {
   config: IConfig;
+  /**
+   *  ISO 4217
+   */
   currency?: string;
   consumerDetails?: IConsumerDetails;
+  /**
+   * Invoked on data updates during prequalification process
+   */
   onDataUpdate?: OnDataUpdate;
+  /**
+   * Fires just before the modal dialog is displayed. Used to hide loading indicators
+   */
   onModalOpen?: () => void;
 };
 
 export type ICheckoutProps = IPrequalifyProps & {
   cartDetails: ICartDetails;
+  /**
+   * Confirmation token received after `prequalify()`. Will continue prequalification to the checkout.
+   * The cart's total amount must be <= to the prequalified amount
+   */
   prequalifyConfirmationToken?: string;
 };
 
@@ -124,7 +137,11 @@ const launchPaymentsUI = (
       prequalifyConfirmationToken,
       onDataUpdate: onDataUpdate
         ? (updatedData, callback) => {
-            callback(onDataUpdate(updatedData));
+            const result = onDataUpdate(updatedData);
+            if (result)
+              result.then(data => callback(data));
+            else
+              callback();
           }
         : undefined,
       callback: checkout

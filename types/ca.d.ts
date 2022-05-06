@@ -14,11 +14,24 @@ export interface AppSettings {
 }
 
 export interface IPreferences {
+  /**
+   * UTS LDML (https://www.unicode.org/reports/tr35/tr35.html#Identifiers).
+   * Examples:
+   * - en for English
+   * - en-US for English as spoken in the United States
+   * - en-GB for English as spoken in the United Kingdom
+   * - es-AR for Spanish as spoken in Argentina
+   * - ar-001 for Arabic as spoken throughout the world
+   * - ar-AE for Arabic as spoken in United Arab Emirates
+   */
   language?: string;
 }
 
 interface Lender {
   id: string;
+  /**
+   * Name of the financing lender
+   */
   name: string;
 }
 
@@ -40,6 +53,9 @@ export interface AppOptionsProps extends AdditionalPropsToOptions {
   onDataUpdate?: OnDataUpdate;
   channel?: Channel;
   preferences?: IPreferences;
+  /**
+   *  ISO 4217
+   */
   currency?: string;
 }
 
@@ -91,6 +107,9 @@ type OnDataUpdate = (
 ) => void;
 
 export interface CheckoutCallBackArguments {
+  /**
+   * Token used for post-sale operations https://docs.chargeafter.com/reference/charges-create-new
+   */
   token: string | null;
   data: CheckoutCallBackData | null;
   error: CheckoutError | null;
@@ -105,9 +124,15 @@ interface AvailableCredit {
 }
 
 export interface ApplyCallBackData {
+  /**
+   * Used in Consumers API https://docs.chargeafter.com/reference/get_v1-post-sale-consumers-consumerid
+   */
   consumerId: string;
   consumerDetails: IConsumerDetails;
   availableCredit: Array<AvailableCredit>;
+  /**
+   * Token used as prequalifyConfirmationToken in Checkout
+   */
   token: string;
 }
 
