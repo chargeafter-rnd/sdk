@@ -39,12 +39,12 @@
   "module": "dist/sdk.esm.js",
   "size-limit": [
     {
-      "path": "dist/sdk.cjs.production.min.js",
-      "limit": "10 KB"
+      "path": "dist/payment-sdk.cjs.production.min.js",
+      "limit": "1 KB"
     },
     {
-      "path": "dist/sdk.esm.js",
-      "limit": "10 KB"
+      "path": "dist/payment-sdk.esm.js",
+      "limit": "1 KB"
     }
   ],
   "devDependencies": {
