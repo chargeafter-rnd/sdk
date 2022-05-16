@@ -47,6 +47,9 @@ export interface AppOptionsProps extends AdditionalPropsToOptions {
   appSettings?: AppSettings;
   consumerDetails?: IConsumerDetails;
   cartDetails?: ICartDetails;
+  /**
+   * The token returned after 'prequalify' flow.
+   */
   prequalifyConfirmationToken?: string;
   managed?: Managed;
   callback?: (...args: any[]) => void;
@@ -173,6 +176,7 @@ export interface Flow {
 export interface Config {
   apiKey: string;
   storeId?: string;
+  delegatedMerchantId?: string;
   onLoadChargeAfter?: () => void;
   iframeId?: string;
   onLoaded?: () => void;

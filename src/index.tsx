@@ -29,6 +29,7 @@ export type EnvironmentType =
 export type IEnvironment = {
   name?: EnvironmentType;
   apiKey: string;
+  delegatedMerchantId?: string;
 };
 
 const URLs: Record<EnvironmentType, string> = {
@@ -174,6 +175,7 @@ const launchPaymentsUI = (
 
     const caConfig: Config = {
       apiKey: config.env.apiKey,
+      delegatedMerchantId: config.env.delegatedMerchantId,
       storeId: config.storeId,
       onLoadChargeAfter: present,
       onLoaded: onModalOpen,
