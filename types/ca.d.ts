@@ -48,10 +48,11 @@ export interface AppOptionsProps extends AdditionalPropsToOptions {
   consumerDetails?: IConsumerDetails;
   cartDetails?: ICartDetails;
   /**
-   * The token returned after 'prequalify' flow.
+   * The application to resume (returned inside callback(data)).
    */
-  prequalifyConfirmationToken?: string;
+  applicationId?: string;
   managed?: Managed;
+  confirm?: OnConfirm;
   callback?: (...args: any[]) => void;
   onDataUpdate?: OnDataUpdate;
   channel?: Channel;
@@ -81,8 +82,15 @@ interface OnDataUpdateCallBackData {
   totalAmount?: number;
 }
 
-export interface CheckoutCallBackData {
+export interface CallbackData {
   consumerDetails: IConsumerDetails;
+  /**
+   * Application id (can be resumed in Checkout)
+   */
+  applicationId: string;
+}
+
+export interface CheckoutCallBackData extends CallbackData {
   lender: Lender;
   totalAmount: number;
   taxAmount: number;
@@ -103,6 +111,7 @@ export interface CheckoutError {
 }
 
 type OnDataUpdateCallBack = (data?: OnDataUpdateCallBackData) => void;
+type OnConfirm = (token: string) => void;
 
 type OnDataUpdate = (
   updatedData: UpdatedData,
@@ -126,17 +135,12 @@ interface AvailableCredit {
   creditAmount: string;
 }
 
-export interface ApplyCallBackData {
+export interface ApplyCallBackData extends CallbackData {
   /**
    * Used in Consumers API https://docs.chargeafter.com/reference/get_v1-post-sale-consumers-consumerid
    */
   consumerId: string;
-  consumerDetails: IConsumerDetails;
   availableCredit: Array<AvailableCredit>;
-  /**
-   * Token used as prequalifyConfirmationToken in Checkout
-   */
-  token: string;
 }
 
 type ApplyErrorCode =
@@ -152,7 +156,7 @@ interface ApplyError {
 
 export interface ApplyCallbackArguments {
   data: ApplyCallBackData | null;
-  error: ApplyError | null;
+  status: ApplyError | null;
 }
 
 /**

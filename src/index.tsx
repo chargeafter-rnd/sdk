@@ -6,6 +6,7 @@ import {
   CheckoutError,
   Config,
   IPreferences,
+  OnConfirm,
   OnDataUpdateCallBackData,
   UpdatedData,
 } from '../types/ca';
@@ -66,6 +67,10 @@ export type IPrequalifyProps = {
    * Fires just before the modal dialog is displayed. Used to hide loading indicators
    */
   onModalOpen?: () => void;
+  /**
+   * Fires when the user confirms the loan and confirmation token is created
+   */
+  onConfirm?: OnConfirm;
 };
 
 export type ICheckoutProps = IPrequalifyProps & {
@@ -74,7 +79,7 @@ export type ICheckoutProps = IPrequalifyProps & {
    * Confirmation token received after `prequalify()`. Will continue prequalification to the checkout.
    * The cart's total amount must be <= to the prequalified amount
    */
-  prequalifyConfirmationToken?: string;
+  applicationId?: string;
 };
 
 export type CheckoutResult = CheckoutCallBackData & { token: string };
@@ -88,6 +93,7 @@ export const prequalify = (props: IPrequalifyProps) =>
     props.consumerDetails,
     props.onDataUpdate,
     props.onModalOpen,
+    props.onConfirm,
   ) as Promise<PrequalifyResult>;
 
 export const checkout = (props: ICheckoutProps) =>
@@ -98,8 +104,9 @@ export const checkout = (props: ICheckoutProps) =>
     props.consumerDetails,
     props.onDataUpdate,
     props.onModalOpen,
+    props.onConfirm,
     true,
-    props.prequalifyConfirmationToken,
+    props.applicationId,
   ) as Promise<CheckoutResult>;
 
 const createPaymentsUI = ({ caConfig, url, present }: CreatePaymentsData) => {
@@ -126,8 +133,9 @@ const launchPaymentsUI = (
   consumerDetails?: IConsumerDetails,
   onDataUpdate?: OnDataUpdate,
   onModalOpen?: () => void,
+  onConfirm?: OnConfirm,
   checkout?: boolean,
-  prequalifyConfirmationToken?: string,
+  applicationId?: string,
 ) => {
   const envUrl = URLs[config.env.name ?? 'production'];
 
@@ -135,7 +143,8 @@ const launchPaymentsUI = (
     const opt: AppOptionsProps = {
       consumerDetails,
       cartDetails,
-      prequalifyConfirmationToken,
+      applicationId,
+      confirm: onConfirm,
       onDataUpdate: onDataUpdate
         ? (updatedData, callback) => {
             const result = onDataUpdate(updatedData);
@@ -168,7 +177,7 @@ const launchPaymentsUI = (
     const present = () => {
       const method = checkout ? 'checkout' : 'apply';
       console.log(
-        `Calling SDK for ${method}, prequalify token: '${opt.prequalifyConfirmationToken}'`,
+        `Calling SDK for ${method}, resume token: '${opt.applicationId}'`,
       );
       window.ChargeAfter[method]?.present(opt);
     };
