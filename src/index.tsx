@@ -144,7 +144,7 @@ const launchPaymentsUI = (
       consumerDetails,
       cartDetails,
       applicationId,
-      confirm: onConfirm,
+      onConfirm: onConfirm,
       onDataUpdate: onDataUpdate
         ? (updatedData, callback) => {
             const result = onDataUpdate(updatedData);

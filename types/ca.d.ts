@@ -52,7 +52,7 @@ export interface AppOptionsProps extends AdditionalPropsToOptions {
    */
   applicationId?: string;
   managed?: Managed;
-  confirm?: OnConfirm;
+  onConfirm?: OnConfirm;
   callback?: (...args: any[]) => void;
   onDataUpdate?: OnDataUpdate;
   channel?: Channel;
