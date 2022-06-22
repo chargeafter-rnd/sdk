@@ -1,16 +1,19 @@
 import {
-  ApplyCallBackData,
-  AppOptionsProps,
   Channel,
-  CheckoutCallBackData,
-  CheckoutError,
   Config,
-  IPreferences,
   OnConfirm,
+  CartDetails,
+  CompletionCheckoutData,
+  CompletionApplyData,
+  ConsumerDetails,
   OnDataUpdateCallBackData,
+  CallbackStatus,
   UpdatedData,
-} from '../types/ca';
-import { ICartDetails, IConsumerDetails } from '../types/payments';
+  ConsumerPreferences,
+  MerchantApplyOpt,
+  MerchantCheckoutOpt,
+  ChargeAfter,
+} from '@chargeafter/payment-types';
 
 const checkoutId = 'chargeafter-checkout-finance-sdk';
 
@@ -45,7 +48,7 @@ export type IConfig = {
   env: IEnvironment;
   channel?: Channel;
   storeId?: string;
-  preferences?: IPreferences;
+  preferences?: ConsumerPreferences;
 };
 
 export type OnDataUpdate = (
@@ -54,36 +57,15 @@ export type OnDataUpdate = (
 
 export type IPrequalifyProps = {
   config: IConfig;
-  /**
-   *  ISO 4217
-   */
-  currency?: string;
-  consumerDetails?: IConsumerDetails;
-  /**
-   * Invoked on data updates during prequalification process
-   */
+} & MerchantApplyOpt;
+
+export type ICheckoutProps = MerchantCheckoutOpt & {
+  config: IConfig;
   onDataUpdate?: OnDataUpdate;
-  /**
-   * Fires just before the modal dialog is displayed. Used to hide loading indicators
-   */
-  onModalOpen?: () => void;
-  /**
-   * Fires when the user confirms the loan and confirmation token is created
-   */
-  onConfirm?: OnConfirm;
 };
 
-export type ICheckoutProps = IPrequalifyProps & {
-  cartDetails: ICartDetails;
-  /**
-   * Confirmation token received after `prequalify()`. Will continue prequalification to the checkout.
-   * The cart's total amount must be <= to the prequalified amount
-   */
-  applicationId?: string;
-};
-
-export type CheckoutResult = CheckoutCallBackData & { token: string };
-export type PrequalifyResult = ApplyCallBackData;
+export type CheckoutResult = CompletionCheckoutData;
+export type PrequalifyResult = CompletionApplyData;
 
 export const prequalify = (props: IPrequalifyProps) =>
   launchPaymentsUI(
@@ -91,7 +73,7 @@ export const prequalify = (props: IPrequalifyProps) =>
     props.currency,
     undefined,
     props.consumerDetails,
-    props.onDataUpdate,
+    undefined,
     props.onModalOpen,
     props.onConfirm,
   ) as Promise<PrequalifyResult>;
@@ -117,7 +99,10 @@ const createPaymentsUI = ({ caConfig, url, present }: CreatePaymentsData) => {
     return;
   }
   window.caConfig = caConfig;
-  window.ChargeAfter = { ...(window.ChargeAfter || {}), cfg: caConfig };
+  window.ChargeAfter = {
+    ...(window.ChargeAfter || ({} as ChargeAfter)),
+    cfg: caConfig,
+  };
   const script = document.createElement('script');
   script.id = checkoutId;
   script.onload = present;
@@ -129,8 +114,8 @@ const createPaymentsUI = ({ caConfig, url, present }: CreatePaymentsData) => {
 const launchPaymentsUI = (
   config: IConfig,
   currency?: string,
-  cartDetails?: ICartDetails,
-  consumerDetails?: IConsumerDetails,
+  cartDetails?: CartDetails,
+  consumerDetails?: ConsumerDetails,
   onDataUpdate?: OnDataUpdate,
   onModalOpen?: () => void,
   onConfirm?: OnConfirm,
@@ -138,48 +123,59 @@ const launchPaymentsUI = (
   applicationId?: string,
 ) => {
   const envUrl = URLs[config.env.name ?? 'production'];
-
   return new Promise((resolve, reject) => {
-    const opt: AppOptionsProps = {
+    const baseOpt = {
       consumerDetails,
-      cartDetails,
-      applicationId,
+      channel: config.channel,
+      preferences: config.preferences,
+      currency,
       onConfirm: onConfirm,
+    };
+
+    const checkoutOpt: MerchantCheckoutOpt = {
+      ...baseOpt,
+      cartDetails: cartDetails as CartDetails,
+      applicationId,
       onDataUpdate: onDataUpdate
         ? (updatedData, callback) => {
             const result = onDataUpdate(updatedData);
             if (result) result.then((data) => callback(data));
-            else callback();
+            else callback({});
           }
         : undefined,
-      callback: checkout
-        ? (
-            token?: string,
-            data?: CheckoutCallBackData,
-            error?: CheckoutError,
-          ) => {
-            if (error) {
-              console.error(`payments error: ${JSON.stringify(error)}`);
-              reject(error);
-            } else resolve({ token, ...data });
-          }
-        : (result?: ApplyCallBackData, error?: CheckoutError) => {
-            if (error) {
-              console.error(`payments error: ${JSON.stringify(error)}`);
-              reject(error);
-            } else resolve(result);
-          },
-      channel: config.channel,
-      preferences: config.preferences,
-      currency,
+      callback: (
+        token?: string,
+        data?: CompletionCheckoutData,
+        error?: CallbackStatus,
+      ) => {
+        if (error) {
+          console.error(`payments error: ${JSON.stringify(error)}`);
+          reject(error);
+        } else resolve({ token, ...data });
+      },
+    };
+
+    const applyOpt: MerchantApplyOpt = {
+      ...baseOpt,
+      callback: (result?: CompletionApplyData, error?: CallbackStatus) => {
+        if (error) {
+          console.error(`payments error: ${JSON.stringify(error)}`);
+          reject(error);
+        } else resolve(result);
+      },
     };
 
     const present = () => {
       const method = checkout ? 'checkout' : 'apply';
       console.log(
-        `Calling SDK for ${method}, resume token: '${opt.applicationId}'`,
+        `Calling SDK for ${method}${
+          checkout ? `, resume token: '${checkoutOpt.applicationId}` : ''
+        }'`,
       );
-      window.ChargeAfter[method]?.present(opt);
+
+      checkout
+        ? window.ChargeAfter?.checkout.present(checkoutOpt)
+        : window.ChargeAfter?.apply.present(applyOpt);
     };
 
     const caConfig: Config = {
