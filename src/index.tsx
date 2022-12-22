@@ -23,6 +23,13 @@ interface CreatePaymentsData {
   present: () => void;
 }
 
+type CreditTier  = 'SubPrime'| 'NearPrime'| 'Prime'
+
+
+interface IFilter {
+  creditTiers? : CreditTier[]
+}
+
 export type EnvironmentType =
   | 'production'
   | 'qa'
@@ -49,6 +56,7 @@ export type IConfig = {
   channel?: Channel;
   storeId?: string;
   preferences?: ConsumerPreferences;
+  filter?: IFilter;
 };
 
 export type OnDataUpdate = (
@@ -128,6 +136,7 @@ const launchPaymentsUI = (
       consumerDetails,
       channel: config.channel,
       preferences: config.preferences,
+      filter: config.filter,
       currency,
       onConfirm: onConfirm,
     };
