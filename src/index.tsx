@@ -13,6 +13,7 @@ import {
   MerchantApplyOpt,
   MerchantCheckoutOpt,
   ChargeAfter,
+  Filter,
 } from '@chargeafter/payment-types';
 
 const checkoutId = 'chargeafter-checkout-finance-sdk';
@@ -23,12 +24,7 @@ interface CreatePaymentsData {
   present: () => void;
 }
 
-type CreditTier  = 'SubPrime'| 'NearPrime'| 'Prime'
 
-
-interface IFilter {
-  creditTiers? : CreditTier[]
-}
 
 export type EnvironmentType =
   | 'production'
@@ -56,7 +52,6 @@ export type IConfig = {
   channel?: Channel;
   storeId?: string;
   preferences?: ConsumerPreferences;
-  filter?: IFilter;
 };
 
 export type OnDataUpdate = (
@@ -81,6 +76,7 @@ export const prequalify = (props: IPrequalifyProps) =>
     props.currency,
     undefined,
     props.consumerDetails,
+    props.filter,
     undefined,
     props.onModalOpen,
     props.onConfirm,
@@ -92,6 +88,7 @@ export const checkout = (props: ICheckoutProps) =>
     props.currency,
     props.cartDetails,
     props.consumerDetails,
+    props.filter,
     props.onDataUpdate,
     props.onModalOpen,
     props.onConfirm,
@@ -124,6 +121,7 @@ const launchPaymentsUI = (
   currency?: string,
   cartDetails?: CartDetails,
   consumerDetails?: ConsumerDetails,
+  filter?: Filter,
   onDataUpdate?: OnDataUpdate,
   onModalOpen?: () => void,
   onConfirm?: OnConfirm,
@@ -136,7 +134,7 @@ const launchPaymentsUI = (
       consumerDetails,
       channel: config.channel,
       preferences: config.preferences,
-      filter: config.filter,
+      filter: filter,
       currency,
       onConfirm: onConfirm,
     };

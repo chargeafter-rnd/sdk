@@ -49,7 +49,7 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.15.8",
-    "@chargeafter/payment-types": "^0.0.8",
+    "@chargeafter/payment-types": "^0.0.13",
     "@size-limit/preset-small-lib": "^6.0.3",
     "@storybook/addon-essentials": "^6.3.12",
     "@storybook/addon-info": "^5.3.21",
