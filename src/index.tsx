@@ -24,8 +24,6 @@ interface CreatePaymentsData {
   present: () => void;
 }
 
-
-
 export type EnvironmentType =
   | 'production'
   | 'qa'
