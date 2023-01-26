@@ -34,7 +34,6 @@ export type EnvironmentType =
 export type IEnvironment = {
   name?: EnvironmentType;
   apiKey: string;
-  browserSessionId?: string;
   delegatedMerchantId?: string;
 };
 
@@ -184,11 +183,14 @@ const launchPaymentsUI = (
         : window.ChargeAfter?.apply.present(applyOpt);
     };
 
-    const caConfig: Config = {
+    const caConfig: Config & { browserSessionId?: string } = {
       apiKey: config.env.apiKey,
       delegatedMerchantId: config.env.delegatedMerchantId,
       storeId: config.storeId,
-      browserSessionId: config.env.browserSessionId,
+      browserSessionId:
+        ('browserSessionId' in config.env &&
+          (config.env.browserSessionId as string)) ||
+        undefined,
       onLoadChargeAfter: present,
       onLoaded: onModalOpen,
     };
