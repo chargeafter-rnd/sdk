@@ -187,10 +187,9 @@ const launchPaymentsUI = (
       apiKey: config.env.apiKey,
       delegatedMerchantId: config.env.delegatedMerchantId,
       storeId: config.storeId,
-      browserSessionId:
-        ('browserSessionId' in config.env &&
-          (config.env.browserSessionId as string)) ||
-        undefined,
+      browserSessionId: (
+        config.env as IEnvironment & { browserSessionId?: string }
+      ).browserSessionId,
       onLoadChargeAfter: present,
       onLoaded: onModalOpen,
     };
