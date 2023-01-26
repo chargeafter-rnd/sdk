@@ -183,10 +183,13 @@ const launchPaymentsUI = (
         : window.ChargeAfter?.apply.present(applyOpt);
     };
 
-    const caConfig: Config = {
+    const caConfig: Config & { browserSessionId?: string } = {
       apiKey: config.env.apiKey,
       delegatedMerchantId: config.env.delegatedMerchantId,
       storeId: config.storeId,
+      browserSessionId: (
+        config.env as IEnvironment & { browserSessionId?: string }
+      ).browserSessionId,
       onLoadChargeAfter: present,
       onLoaded: onModalOpen,
     };
