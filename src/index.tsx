@@ -34,6 +34,7 @@ export type EnvironmentType =
 export type IEnvironment = {
   name?: EnvironmentType;
   apiKey: string;
+  browserSessionId?: string;
   delegatedMerchantId?: string;
 };
 
@@ -187,6 +188,7 @@ const launchPaymentsUI = (
       apiKey: config.env.apiKey,
       delegatedMerchantId: config.env.delegatedMerchantId,
       storeId: config.storeId,
+      browserSessionId: config.env.browserSessionId,
       onLoadChargeAfter: present,
       onLoaded: onModalOpen,
     };
