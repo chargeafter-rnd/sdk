@@ -135,6 +135,9 @@ const launchPaymentsUI = (
       filter: filter,
       currency,
       onConfirm: onConfirm,
+      browserSessionId: (
+        config.env as IEnvironment & { browserSessionId?: string }
+      ).browserSessionId,
     };
 
     const checkoutOpt: MerchantCheckoutOpt = {
@@ -187,9 +190,6 @@ const launchPaymentsUI = (
       apiKey: config.env.apiKey,
       delegatedMerchantId: config.env.delegatedMerchantId,
       storeId: config.storeId,
-      browserSessionId: (
-        config.env as IEnvironment & { browserSessionId?: string }
-      ).browserSessionId,
       onLoadChargeAfter: present,
       onLoaded: onModalOpen,
     };
