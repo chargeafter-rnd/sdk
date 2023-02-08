@@ -157,8 +157,10 @@ const launchPaymentsUI = (
         error?: CallbackStatus,
       ) => {
         if (error) {
-          console.error(`payments error: ${JSON.stringify(error)}`);
-          reject(error);
+          console.info(
+            `[ChargeAfterSDK]payments status: ${JSON.stringify(error)}`,
+          );
+          reject({ ...error, data });
         } else resolve({ token, ...data });
       },
     };
@@ -167,8 +169,10 @@ const launchPaymentsUI = (
       ...baseOpt,
       callback: (result?: CompletionApplyData, error?: CallbackStatus) => {
         if (error) {
-          console.error(`payments error: ${JSON.stringify(error)}`);
-          reject(error);
+          console.info(
+            `[ChargeAfterSDK]payments status: ${JSON.stringify(error)}`,
+          );
+          reject({ ...error, data: result });
         } else resolve(result);
       },
     };
