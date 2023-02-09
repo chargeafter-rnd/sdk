@@ -1,5 +1,6 @@
 # ChargeAfter payment SDK
-----------
+
+---
 
 ### Installing
 
@@ -13,7 +14,7 @@ npm install --save @chargeafter/payment-sdk
 import { prequalify, checkout } from "@chargeafter/payment-sdk";
 
 // open modal to obtain available credit
-await prequalify({
+prequalify({
     config: {
         env: {
             name?: "production" | "sandbox", // defaults to "production"
@@ -21,10 +22,14 @@ await prequalify({
         }
     },
     ...
+}).then((result: CompletionApplyData)  => {
+    // Fires when apply flow finished
+}).catch((ex: { code: String, message: string, data: CompletionApplyData }) => {
+    // Fires when apply flow finishes un-successfully
 });
 
 // open modal to perform full checkout
-await checkout({
+checkout({
     config: {
         env: {
             name?: "production" | "sandbox", // defaults to "production"
@@ -33,5 +38,11 @@ await checkout({
     },
     cartDetails: ...
     ...
-});
+}).then((result: CompletionCheckoutData)  => {
+    // Fires when apply flow finished
+}).catch((ex: { code: String, message: string, data: CompletionCheckoutData }) => {
+    // Fires when apply flow finishes un-successfully
+});;
 ```
+
+Check Docs for detailed callback interface for [apply](https://docs.chargeafter.com/docs/the-apply-completion-callback) and [checkout](https://docs.chargeafter.com/docs/present)
