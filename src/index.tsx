@@ -125,6 +125,8 @@ const launchPaymentsUI = (
   onConfirm?: OnConfirm,
   checkout?: boolean,
   applicationId?: string,
+  posId?: MerchantCheckoutOpt['posId'],
+  posType?: MerchantCheckoutOpt['posType'],
 ) => {
   const envUrl = URLs[config.env.name ?? 'production'];
   return new Promise((resolve, reject) => {
@@ -138,6 +140,8 @@ const launchPaymentsUI = (
       browserSessionId: (
         config.env as IEnvironment & { browserSessionId?: string }
       ).browserSessionId,
+      posId,
+      posType,
     };
 
     const checkoutOpt: MerchantCheckoutOpt = {
