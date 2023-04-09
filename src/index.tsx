@@ -68,31 +68,55 @@ export type ICheckoutProps = MerchantCheckoutOpt & {
 export type CheckoutResult = CompletionCheckoutData;
 export type PrequalifyResult = CompletionApplyData;
 
-export const prequalify = (props: IPrequalifyProps) =>
-  launchPaymentsUI(
-    props.config,
-    props.currency,
-    undefined,
-    props.consumerDetails,
-    props.filter,
-    undefined,
-    props.onModalOpen,
-    props.onConfirm,
-  ) as Promise<PrequalifyResult>;
+export const prequalify = ({
+  config,
+  currency,
+  consumerDetails,
+  filter,
+  onModalOpen,
+  onConfirm,
+  posId,
+  posType,
+}: IPrequalifyProps) =>
+  launchPaymentsUI({
+    config,
+    currency,
+    consumerDetails,
+    filter,
+    onModalOpen,
+    onConfirm,
+    posId,
+    posType,
+    checkout: false,
+  }) as Promise<PrequalifyResult>;
 
-export const checkout = (props: ICheckoutProps) =>
-  launchPaymentsUI(
-    props.config,
-    props.currency,
-    props.cartDetails,
-    props.consumerDetails,
-    props.filter,
-    props.onDataUpdate,
-    props.onModalOpen,
-    props.onConfirm,
-    true,
-    props.applicationId,
-  ) as Promise<CheckoutResult>;
+export const checkout = ({
+  config,
+  currency,
+  cartDetails,
+  consumerDetails,
+  filter,
+  onDataUpdate,
+  onModalOpen,
+  onConfirm,
+  applicationId,
+  posId,
+  posType,
+}: ICheckoutProps) =>
+  launchPaymentsUI({
+    config,
+    currency,
+    cartDetails,
+    consumerDetails,
+    filter,
+    onDataUpdate,
+    onModalOpen,
+    onConfirm,
+    checkout: true,
+    applicationId,
+    posId,
+    posType,
+  }) as Promise<CheckoutResult>;
 
 const createPaymentsUI = ({ caConfig, url, present }: CreatePaymentsData) => {
   const { document } = window;
@@ -114,20 +138,35 @@ const createPaymentsUI = ({ caConfig, url, present }: CreatePaymentsData) => {
   document.body.appendChild(script);
 };
 
-const launchPaymentsUI = (
-  config: IConfig,
-  currency?: string,
-  cartDetails?: CartDetails,
-  consumerDetails?: ConsumerDetails,
-  filter?: Filter,
-  onDataUpdate?: OnDataUpdate,
-  onModalOpen?: () => void,
-  onConfirm?: OnConfirm,
-  checkout?: boolean,
-  applicationId?: string,
-  posId?: MerchantCheckoutOpt['posId'],
-  posType?: MerchantCheckoutOpt['posType'],
-) => {
+type LaunchPaymentsUIProps = {
+  config: IConfig;
+  currency?: string;
+  cartDetails?: CartDetails;
+  consumerDetails?: ConsumerDetails;
+  filter?: Filter;
+  onDataUpdate?: OnDataUpdate;
+  onModalOpen?: () => void;
+  onConfirm?: OnConfirm;
+  checkout?: boolean;
+  applicationId?: string;
+  posId?: MerchantCheckoutOpt['posId'];
+  posType?: MerchantCheckoutOpt['posType'];
+};
+
+const launchPaymentsUI = ({
+  config,
+  consumerDetails,
+  filter,
+  currency,
+  onConfirm,
+  posId,
+  posType,
+  checkout,
+  applicationId,
+  cartDetails,
+  onDataUpdate,
+  onModalOpen,
+}: LaunchPaymentsUIProps) => {
   const envUrl = URLs[config.env.name ?? 'production'];
   return new Promise((resolve, reject) => {
     const baseOpt = {
