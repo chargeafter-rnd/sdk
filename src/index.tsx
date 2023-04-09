@@ -109,7 +109,7 @@ const createPaymentsUI = ({ caConfig, url, present }: CreatePaymentsData) => {
   const script = document.createElement('script');
   script.id = checkoutId;
   script.onload = present;
-  script.src = url;
+  script.src = `${url}?t=${Date.now()}`;
   script.async = true;
   document.body.appendChild(script);
 };
