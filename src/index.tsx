@@ -18,12 +18,6 @@ import {
 
 const checkoutId = 'chargeafter-checkout-finance-sdk';
 
-interface CreatePaymentsData {
-  caConfig: Config;
-  url: string;
-  present: () => void;
-}
-
 export type EnvironmentType =
   | 'production'
   | 'qa'
@@ -118,22 +112,6 @@ export const checkout = ({
     posType,
   }) as Promise<CheckoutResult>;
 
-const createPaymentsUI = ({ caConfig, url, present }: CreatePaymentsData) => {
-  const { document } = window;
-  if (document.getElementById(checkoutId)) {
-    present();
-    caConfig.onLoaded?.();
-    return;
-  }
-  window.caConfig = caConfig;
-  window.ChargeAfter = {
-    ...(window.ChargeAfter || ({} as ChargeAfter)),
-    cfg: caConfig,
-  };
-
-  initScript(url, present);
-};
-
 type LaunchPaymentsUIProps = {
   config: IConfig;
   currency?: string;
@@ -163,7 +141,6 @@ const launchPaymentsUI = ({
   onDataUpdate,
   onModalOpen,
 }: LaunchPaymentsUIProps) => {
-  const envUrl = URLs[config.env.name ?? 'production'];
   return new Promise((resolve, reject) => {
     const baseOpt = {
       consumerDetails,
@@ -216,7 +193,14 @@ const launchPaymentsUI = ({
       },
     };
 
-    const present = () => {
+    const caConfig: Config & { browserSessionId?: string } = {
+      apiKey: config.env.apiKey,
+      delegatedMerchantId: config.env.delegatedMerchantId,
+      storeId: config.storeId,
+      onLoaded: onModalOpen,
+    };
+
+    initialize(caConfig, config.env.name).then((ChargeAfter) => {
       const method = checkout ? 'checkout' : 'apply';
       console.log(
         `Calling SDK for ${method}${
@@ -225,22 +209,8 @@ const launchPaymentsUI = ({
       );
 
       checkout
-        ? window.ChargeAfter?.payments.present('checkout', checkoutOpt)
-        : window.ChargeAfter?.payments.present('apply', applyOpt);
-    };
-
-    const caConfig: Config & { browserSessionId?: string } = {
-      apiKey: config.env.apiKey,
-      delegatedMerchantId: config.env.delegatedMerchantId,
-      storeId: config.storeId,
-      onLoadChargeAfter: present,
-      onLoaded: onModalOpen,
-    };
-
-    createPaymentsUI({
-      caConfig,
-      url: envUrl,
-      present,
+        ? ChargeAfter?.payments.present('checkout', checkoutOpt)
+        : ChargeAfter?.payments.present('apply', applyOpt);
     });
   });
 };
@@ -256,17 +226,20 @@ const initScript = (envUrl: string, onLoaded: () => void) => {
 
 export const initialize = async (
   caConfig: Config,
-  env: EnvironmentType,
+  env: EnvironmentType = 'production',
 ): Promise<ChargeAfter> => {
-  const envUrl = URLs[env ?? 'production'];
+  const envUrl = URLs[env];
   const { document } = window;
-  if (document.getElementById(checkoutId)) {
-    return new Promise((resolve, reject) => {
-      window.ChargeAfter
-        ? resolve(window.ChargeAfter)
-        : reject(new Error('ChargeAfter not initialized'));
-    });
+  if (document.getElementById(checkoutId) && window.ChargeAfter) {
+    caConfig.onLoaded?.();
+    return window.ChargeAfter;
   }
+
+  window.caConfig = caConfig;
+  window.ChargeAfter = {
+    ...(window.ChargeAfter || ({} as ChargeAfter)),
+    cfg: caConfig,
+  };
 
   let resolveCAObject: (chargeafter: ChargeAfter) => void;
   let rejectCAObject: (error: Error) => void;
