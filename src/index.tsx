@@ -130,12 +130,8 @@ const createPaymentsUI = ({ caConfig, url, present }: CreatePaymentsData) => {
     ...(window.ChargeAfter || ({} as ChargeAfter)),
     cfg: caConfig,
   };
-  const script = document.createElement('script');
-  script.id = checkoutId;
-  script.onload = present;
-  script.src = `${url}?t=${Date.now()}`;
-  script.async = true;
-  document.body.appendChild(script);
+
+  initScript(url, present);
 };
 
 type LaunchPaymentsUIProps = {
@@ -229,8 +225,8 @@ const launchPaymentsUI = ({
       );
 
       checkout
-        ? window.ChargeAfter?.checkout.present(checkoutOpt)
-        : window.ChargeAfter?.apply.present(applyOpt);
+        ? window.ChargeAfter?.payments.present('checkout', checkoutOpt)
+        : window.ChargeAfter?.payments.present('apply', applyOpt);
     };
 
     const caConfig: Config & { browserSessionId?: string } = {
@@ -247,4 +243,47 @@ const launchPaymentsUI = ({
       present,
     });
   });
+};
+
+const initScript = (envUrl: string, onLoaded: () => void) => {
+  const script = document.createElement('script');
+  script.id = checkoutId;
+  script.onload = onLoaded;
+  script.src = `${envUrl}?t=${Date.now()}`;
+  script.async = true;
+  document.body.appendChild(script);
+};
+
+export const initialize = async (
+  caConfig: Config,
+  env: EnvironmentType,
+): Promise<ChargeAfter> => {
+  const envUrl = URLs[env ?? 'production'];
+  const { document } = window;
+  if (document.getElementById(checkoutId)) {
+    return new Promise((resolve, reject) => {
+      window.ChargeAfter
+        ? resolve(window.ChargeAfter)
+        : reject(new Error('ChargeAfter not initialized'));
+    });
+  }
+
+  let resolveCAObject: (chargeafter: ChargeAfter) => void;
+  let rejectCAObject: (error: Error) => void;
+
+  const chargeafter = new Promise<ChargeAfter>((resolve, reject) => {
+    resolveCAObject = resolve;
+    rejectCAObject = reject;
+  });
+
+  const onLoadedFn = async () => {
+    if (window.ChargeAfter) {
+      await window.ChargeAfter?.init({ apiKey: caConfig.apiKey });
+      resolveCAObject(window.ChargeAfter);
+    } else rejectCAObject(new Error('ChargeAfter not initialized'));
+  };
+
+  initScript(envUrl, onLoadedFn);
+
+  return chargeafter;
 };
