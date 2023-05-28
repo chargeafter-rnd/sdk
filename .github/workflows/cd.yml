@@ -30,8 +30,6 @@ jobs:
     # set up git since we will later push to the repo
     - run: git config --global user.name "GitHub CD bot"
     - run: git config --global user.email "github-cd-bot@chargeafter.com"
-    # upgrade npm version in package.json to the tag used in the release.
-    - run: npm version ${{ github.event.release.tag_name }}
     # build the project
     - run: npm run build
     # run tests just in case
