@@ -1,7 +1,8 @@
+import { ChargeAfter, Config } from '@chargeafter/payment-types';
 import '@types/jest';
 declare global {
   interface Window {
-    ChargeAfter: any;
-    caConfig: any;
+    ChargeAfter: ChargeAfter;
+    caConfig: Config;
   }
 }

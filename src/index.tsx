@@ -16,13 +16,29 @@ import {
   Filter,
 } from '@chargeafter/payment-types';
 
-const checkoutId = 'chargeafter-checkout-finance-sdk';
+export type {
+  Channel,
+  Config,
+  OnConfirm,
+  CartDetails,
+  CompletionCheckoutData,
+  CompletionApplyData,
+  ConsumerDetails,
+  OnDataUpdateCallBackData,
+  CallbackStatus,
+  UpdatedData,
+  ConsumerPreferences,
+  MerchantApplyOpt,
+  MerchantCheckoutOpt,
+  ChargeAfter,
+  Filter,
+  MerchantEligibilityOpt,
+  OnDataUpdateCallBack,
+  OrganizationDetails,
+  PosType,
+} from '@chargeafter/payment-types';
 
-interface CreatePaymentsData {
-  caConfig: Config;
-  url: string;
-  present: () => void;
-}
+const checkoutId = 'chargeafter-checkout-finance-sdk';
 
 export type EnvironmentType =
   | 'production'
@@ -118,26 +134,6 @@ export const checkout = ({
     posType,
   }) as Promise<CheckoutResult>;
 
-const createPaymentsUI = ({ caConfig, url, present }: CreatePaymentsData) => {
-  const { document } = window;
-  if (document.getElementById(checkoutId)) {
-    present();
-    caConfig.onLoaded?.();
-    return;
-  }
-  window.caConfig = caConfig;
-  window.ChargeAfter = {
-    ...(window.ChargeAfter || ({} as ChargeAfter)),
-    cfg: caConfig,
-  };
-  const script = document.createElement('script');
-  script.id = checkoutId;
-  script.onload = present;
-  script.src = `${url}?t=${Date.now()}`;
-  script.async = true;
-  document.body.appendChild(script);
-};
-
 type LaunchPaymentsUIProps = {
   config: IConfig;
   currency?: string;
@@ -167,7 +163,6 @@ const launchPaymentsUI = ({
   onDataUpdate,
   onModalOpen,
 }: LaunchPaymentsUIProps) => {
-  const envUrl = URLs[config.env.name ?? 'production'];
   return new Promise((resolve, reject) => {
     const baseOpt = {
       consumerDetails,
@@ -220,7 +215,14 @@ const launchPaymentsUI = ({
       },
     };
 
-    const present = () => {
+    const caConfig: Config & { browserSessionId?: string } = {
+      apiKey: config.env.apiKey,
+      delegatedMerchantId: config.env.delegatedMerchantId,
+      storeId: config.storeId,
+      onLoaded: onModalOpen,
+    };
+
+    initialize(caConfig, config.env.name).then((ChargeAfter) => {
       const method = checkout ? 'checkout' : 'apply';
       console.log(
         `Calling SDK for ${method}${
@@ -229,22 +231,54 @@ const launchPaymentsUI = ({
       );
 
       checkout
-        ? window.ChargeAfter?.checkout.present(checkoutOpt)
-        : window.ChargeAfter?.apply.present(applyOpt);
-    };
-
-    const caConfig: Config & { browserSessionId?: string } = {
-      apiKey: config.env.apiKey,
-      delegatedMerchantId: config.env.delegatedMerchantId,
-      storeId: config.storeId,
-      onLoadChargeAfter: present,
-      onLoaded: onModalOpen,
-    };
-
-    createPaymentsUI({
-      caConfig,
-      url: envUrl,
-      present,
+        ? ChargeAfter?.payments.present('checkout', checkoutOpt)
+        : ChargeAfter?.payments.present('apply', applyOpt);
     });
   });
+};
+
+const initScript = (envUrl: string, onLoaded: () => void) => {
+  const script = document.createElement('script');
+  script.id = checkoutId;
+  script.onload = onLoaded;
+  script.src = `${envUrl}?t=${Date.now()}`;
+  script.async = true;
+  document.body.appendChild(script);
+};
+
+export const initialize = async (
+  caConfig: Config,
+  env: EnvironmentType = 'production',
+): Promise<ChargeAfter> => {
+  const envUrl = URLs[env];
+  const { document } = window;
+  if (document.getElementById(checkoutId) && window.ChargeAfter) {
+    caConfig.onLoaded?.();
+    return window.ChargeAfter;
+  }
+
+  window.caConfig = caConfig;
+  window.ChargeAfter = {
+    ...(window.ChargeAfter || ({} as ChargeAfter)),
+    cfg: caConfig,
+  };
+
+  let resolveCAObject: (chargeafter: ChargeAfter) => void;
+  let rejectCAObject: (error: Error) => void;
+
+  const chargeafter = new Promise<ChargeAfter>((resolve, reject) => {
+    resolveCAObject = resolve;
+    rejectCAObject = reject;
+  });
+
+  const onLoadedFn = async () => {
+    if (window.ChargeAfter) {
+      await window.ChargeAfter?.init(caConfig);
+      resolveCAObject(window.ChargeAfter);
+    } else rejectCAObject(new Error('ChargeAfter not initialized'));
+  };
+
+  initScript(envUrl, onLoadedFn);
+
+  return chargeafter;
 };
