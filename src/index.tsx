@@ -16,6 +16,8 @@ import {
   Filter,
 } from '@chargeafter/payment-types';
 
+export type * from '@chargeafter/payment-types';
+
 const checkoutId = 'chargeafter-checkout-finance-sdk';
 
 export type EnvironmentType =
