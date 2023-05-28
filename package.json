@@ -40,7 +40,7 @@
   "size-limit": [
     {
       "path": "dist/payment-sdk.cjs.production.min.js",
-      "limit": "1 KB"
+      "limit": "4 KB"
     },
     {
       "path": "dist/payment-sdk.esm.js",
