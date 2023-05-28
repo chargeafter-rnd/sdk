@@ -16,7 +16,27 @@ import {
   Filter,
 } from '@chargeafter/payment-types';
 
-export type * from '@chargeafter/payment-types';
+export type {
+  Channel,
+  Config,
+  OnConfirm,
+  CartDetails,
+  CompletionCheckoutData,
+  CompletionApplyData,
+  ConsumerDetails,
+  OnDataUpdateCallBackData,
+  CallbackStatus,
+  UpdatedData,
+  ConsumerPreferences,
+  MerchantApplyOpt,
+  MerchantCheckoutOpt,
+  ChargeAfter,
+  Filter,
+  MerchantEligibilityOpt,
+  OnDataUpdateCallBack,
+  OrganizationDetails,
+  PosType,
+} from '@chargeafter/payment-types';
 
 const checkoutId = 'chargeafter-checkout-finance-sdk';
 
