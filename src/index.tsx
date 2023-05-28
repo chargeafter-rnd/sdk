@@ -273,7 +273,7 @@ export const initialize = async (
 
   const onLoadedFn = async () => {
     if (window.ChargeAfter) {
-      await window.ChargeAfter?.init({ apiKey: caConfig.apiKey });
+      await window.ChargeAfter?.init(caConfig);
       resolveCAObject(window.ChargeAfter);
     } else rejectCAObject(new Error('ChargeAfter not initialized'));
   };
