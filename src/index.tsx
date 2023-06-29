@@ -14,6 +14,7 @@ import {
   MerchantCheckoutOpt,
   ChargeAfter,
   Filter,
+  OnApprovalStatusChange,
 } from '@chargeafter/payment-types';
 
 export type {
@@ -91,6 +92,7 @@ export const prequalify = ({
   filter,
   onModalOpen,
   onConfirm,
+  onApprovalStatusChange,
   posId,
   posType,
 }: IPrequalifyProps) =>
@@ -101,6 +103,7 @@ export const prequalify = ({
     filter,
     onModalOpen,
     onConfirm,
+    onApprovalStatusChange,
     posId,
     posType,
     checkout: false,
@@ -114,6 +117,7 @@ export const checkout = ({
   filter,
   onDataUpdate,
   onModalOpen,
+  onApprovalStatusChange,
   onConfirm,
   applicationId,
   posId,
@@ -128,6 +132,7 @@ export const checkout = ({
     onDataUpdate,
     onModalOpen,
     onConfirm,
+    onApprovalStatusChange,
     checkout: true,
     applicationId,
     posId,
@@ -143,6 +148,7 @@ type LaunchPaymentsUIProps = {
   onDataUpdate?: OnDataUpdate;
   onModalOpen?: () => void;
   onConfirm?: OnConfirm;
+  onApprovalStatusChange?: OnApprovalStatusChange;
   checkout?: boolean;
   applicationId?: string;
   posId?: MerchantCheckoutOpt['posId'];
@@ -155,6 +161,7 @@ const launchPaymentsUI = ({
   filter,
   currency,
   onConfirm,
+  onApprovalStatusChange,
   posId,
   posType,
   checkout,
@@ -171,6 +178,7 @@ const launchPaymentsUI = ({
       filter: filter,
       currency,
       onConfirm: onConfirm,
+      onApprovalStatusChange,
       browserSessionId: (
         config.env as IEnvironment & { browserSessionId?: string }
       ).browserSessionId,

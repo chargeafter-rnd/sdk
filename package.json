@@ -48,7 +48,7 @@
     }
   ],
   "dependencies": {
-    "@chargeafter/payment-types": "^0.0.17"
+    "@chargeafter/payment-types": "^0.0.21"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
