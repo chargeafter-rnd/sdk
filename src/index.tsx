@@ -35,6 +35,7 @@ export type {
   Filter,
   MerchantEligibilityOpt,
   OnDataUpdateCallBack,
+  OnApprovalStatusChange,
   OrganizationDetails,
   PosType,
 } from '@chargeafter/payment-types';
