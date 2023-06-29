@@ -36,6 +36,8 @@ export type {
   MerchantEligibilityOpt,
   OnDataUpdateCallBack,
   OnApprovalStatusChange,
+  OnApprovalStatusChangeStatus,
+  OnApprovalStatusChangeData,
   OrganizationDetails,
   PosType,
 } from '@chargeafter/payment-types';
