@@ -156,6 +156,7 @@ type LaunchPaymentsUIProps = {
   applicationId?: string;
   posId?: MerchantCheckoutOpt['posId'];
   posType?: MerchantCheckoutOpt['posType'];
+  promoCode?: MerchantCheckoutOpt['promoCode'];
 };
 
 const launchPaymentsUI = ({
@@ -167,6 +168,7 @@ const launchPaymentsUI = ({
   onApprovalStatusChange,
   posId,
   posType,
+  promoCode,
   checkout,
   applicationId,
   cartDetails,
@@ -187,6 +189,7 @@ const launchPaymentsUI = ({
       ).browserSessionId,
       posId,
       posType,
+      promoCode,
     };
 
     const checkoutOpt: MerchantCheckoutOpt = {
