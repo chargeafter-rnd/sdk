@@ -1,5 +1,5 @@
 {
-  "version": "1.4.7",
+  "version": "1.4.8",
   "license": "MIT",
   "description": "ChargeAfter payment SDK.\nThis is the preferred integration approach for stores that don't work with supported eCommerce platforms.",
   "repository": {
@@ -48,7 +48,7 @@
     }
   ],
   "dependencies": {
-    "@chargeafter/payment-types": "^0.0.23"
+    "@chargeafter/payment-types": "^0.0.24"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
