@@ -92,7 +92,7 @@ export type IdentifyOpt = {
 
 /**
  * @description - This method is used to launch the identification moda,
- * a modal that collection the consumer's information e.g liance number, expiry date, etc.
+ * a modal that collects the consumer's information e.g license number, expiry date, etc.
  *
  * @param {IdentifyOpt} data - the config and opt for the modal
  * @returns identification token that should be passed in the prequalify or checkout method inside opt
