@@ -91,7 +91,7 @@ export type IdentifyOpt = {
 };
 
 /**
- * @description - This method is used to launch the identification moda,
+ * @description - This method is used to launch the identification modal,
  * a modal that collects the consumer's information e.g license number, expiry date, etc.
  *
  * @param {IdentifyOpt} data - the config and opt for the modal
